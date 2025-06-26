@@ -1,191 +1,172 @@
-# Postman MCP Generator
+# Runway MCP Server
 
-Welcome to your generated MCP server! 🚀 This project was created with the [Postman MCP Generator](https://postman.com/explore/mcp-generator), configured to [Model Context Provider (MCP)](https://modelcontextprotocol.io/introduction) Server output mode. It provides you with:
+A Model Context Protocol (MCP) server for integrating with Runway AI's API to generate images and videos using their Gen4 models.
 
-- ✅ An MCP-compatible server (`mcpServer.js`)
-- ✅ Automatically generated JavaScript tools for each selected Postman API request
+## Features
 
-Let's set things up!
+### Image Generation
+- **Basic Text-to-Image**: Generate images from text prompts using Gen4 Image
+- **Reference-based Image Generation**: Generate images with reference images and @ syntax for precise control
 
-## 🚦 Getting Started
+### Video Generation
+- **Text-to-Video**: Generate videos from text descriptions using Gen4 Turbo
+- **Image-to-Video**: Animate existing images into videos
+- **Video Upscaling**: Enhance video quality and resolution
 
-### ⚙️ Prerequisites
+### Task Management
+- **Task Status Monitoring**: Check the progress of generation tasks
+- **Task Listing**: View recent generation history
+- **Task Cancellation**: Stop running tasks when needed
 
-Before starting, please ensure you have:
+## Setup
 
-- [Node.js (v18+ required, v20+ recommended)](https://nodejs.org/)
-- [npm](https://www.npmjs.com/) (included with Node)
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-Warning: if you run with a lower version of Node, `fetch` won't be present. Tools use `fetch` to make HTTP calls. To work around this, you can modify the tools to use `node-fetch` instead. Make sure that `node-fetch` is installed as a dependency and then import it as `fetch` into each tool file.
+2. **Get Runway API Key**
+   - Sign up at [Runway Developer Portal](https://dev.runwayml.com/)
+   - Create an API key from your dashboard
 
-### 📥 Installation & Setup
+3. **Configure Environment**
+   Create a `.env` file in the project root:
+   ```bash
+   RUNWAY_API_KEY=your_runway_api_key_here
+   ```
 
-**1. Install dependencies**
+4. **Test the Server**
+   ```bash
+   # List available tools
+   npm run list-tools
+   
+   # Run in stdio mode (for MCP clients)
+   node mcpServer.js
+   
+   # Run in SSE mode (for web interfaces)
+   node mcpServer.js --sse
+   ```
 
-Run from your project's root directory:
+## Usage Examples
 
-```sh
-npm install
-```
-
-### 🔐 Set tool environment variables
-
-In the `.env` file, you'll see environment variable placeholders, one for each workspace that the selected tools are from. For example, if you selected requests from 2 workspaces, e.g. Acme and Widgets, you'll see two placeholders:
-
-```
-ACME_API_KEY=
-WIDGETS_API_KEY=
-```
-
-Update the values with actual API keys for each API. These environment variables are used inside of the generated tools to set the API key for each request. You can inspect a file in the `tools` directory to see how it works.
-
+### Generate Image from Text
 ```javascript
-// environment variables are used inside of each tool file
-const apiKey = process.env.ACME_API_KEY;
-```
-
-**Caveat:** This may not be correct for every API. The generation logic is relatively simple - for each workspace, we create an environment variable with the same name as the workspace slug, and then use that environment variable in each tool file that belongs to that workspace. If this isn't the right behavior for your chosen API, no problem! You can manually update anything in the `.env` file or tool files to accurately reflect the API's method of authentication.
-
-## 🌐 Test the MCP Server with Postman
-
-The MCP Server (`mcpServer.js`) exposes your automated API tools to MCP-compatible clients, such as Claude Desktop or the Postman Desktop Application. We recommend that you test the server with Postman first and then move on to using it with an LLM.
-
-The Postman Desktop Application is the easiest way to run and test MCP servers. Testing the downloaded server first is optional but recommended.
-
-**Step 1**: Download the latest Postman Desktop Application from [https://www.postman.com/downloads/](https://www.postman.com/downloads/).
-
-**Step 2**: Read out the documentation article [here](https://learning.postman.com/docs/postman-ai-agent-builder/mcp-requests/create/) and see how to create an MCP request inside the Postman app.
-
-**Step 3**: Set the type of the MCP request to `STDIO` and set the command to `node </absolute/path/to/mcpServer.js>`. If you have issues with using only `node` (e.g. an old version is used), supply an absolute path instead to a node version 18+. You can get the full path to node by running:
-
-```sh
-which node
-```
-
-To check the node version, run:
-
-```sh
-node --version
-```
-
-To get the absolute path to `mcpServer.js`, run:
-
-```sh
-realpath mcpServer.js
-```
-
-Use the node command followed by the full path to `mcpServer.js` as the command for your new Postman MCP Request. Then click the **Connect** button. You should see a list of tools that you selected before generating the server. You can test that each tool works here before connecting the MCP server to an LLM.
-
-## 👩‍💻 Connect the MCP Server to Claude
-
-You can connect your MCP server to any MCP client. Here we provide instructions for connecting it to Claude Desktop.
-
-**Step 1**: Note the full path to node and the `mcpServer.js` from the previous step.
-
-**Step 2**. Open Claude Desktop → **Settings** → **Developers** → **Edit Config** and add a new MCP server:
-
-```json
 {
-  "mcpServers": {
-    "<server_name>": {
-      "command": "<absolute/path/to/node>",
-      "args": ["<absolute/path/to/mcpServer.js>"]
-    }
+  "name": "GenerateImage",
+  "arguments": {
+    "promptText": "A beautiful sunset over a calm ocean with vibrant colors",
+    "ratio": "1920:1080"
   }
 }
 ```
 
-Restart Claude Desktop to activate this change. Make sure the new MCP is turned on and has a green circle next to it. If so, you're ready to begin a chat session that can use the tools you've connected.
-
-**Warning**: If you don't supply an absolute path to a `node` version that is v18+, Claude (and other MCP clients) may fall back to another `node` version on the system of a previous version. In this case, the `fetch` API won't be present and tool calls will not work. If that happens, you can a) install a newer version of node and point to it in the command, or b) import `node-fetch` into each tool as `fetch`, making sure to also add the `node-fetch` dependency to your package.json.
-
-### Additional Options
-
-#### 🐳 Docker Deployment (Production)
-
-For production deployments, you can use Docker:
-
-**1. Build Docker image**
-
-```sh
-docker build -t <your_server_name> .
-```
-
-**2. Claude Desktop Integration**
-
-Add Docker server configuration to Claude Desktop (Settings → Developers → Edit Config):
-
-```json
+### Generate Image with References
+```javascript
 {
-  "mcpServers": {
-    "<your_server_name>": {
-      "command": "docker",
-      "args": ["run", "-i", "--rm", "--env-file=.env", "<your_server_name>"]
-    }
+  "name": "GenerateImageWithReferences",
+  "arguments": {
+    "promptText": "@EiffelTower painted in the style of @StarryNight",
+    "referenceImages": [
+      {
+        "uri": "https://example.com/eiffel-tower.jpg",
+        "tag": "EiffelTower"
+      },
+      {
+        "uri": "https://example.com/starry-night.jpg", 
+        "tag": "StarryNight"
+      }
+    ],
+    "ratio": "1920:1080"
   }
 }
 ```
 
-> Add your environment variables (API keys, etc.) inside the `.env` file.
-
-The project comes bundled with the following minimal Docker setup:
-
-```dockerfile
-FROM node:22.12-alpine AS builder
-
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install
-
-COPY . .
-
-ENTRYPOINT ["node", "mcpServer.js"]
+### Generate Video from Image
+```javascript
+{
+  "name": "GenerateVideoFromImage",
+  "arguments": {
+    "promptImage": "https://example.com/my-image.jpg",
+    "promptText": "The waves gently move and the clouds drift slowly",
+    "duration": 5,
+    "ratio": "1280:720"
+  }
+}
 ```
 
-#### 🌐 Server-Sent Events (SSE)
-
-To run the server with Server-Sent Events (SSE) support, use the `--sse` flag:
-
-```sh
-node mcpServer.js --sse
+### Check Task Status
+```javascript
+{
+  "name": "GetTaskStatus",
+  "arguments": {
+    "taskId": "your-task-id-here"
+  }
+}
 ```
 
-## 🛠️ Additional CLI commands
+## Available Tools
 
-#### List tools
+| Tool Name | Description | Required Parameters |
+|-----------|-------------|-------------------|
+| `GenerateImage` | Generate image from text | `promptText` |
+| `GenerateImageWithReferences` | Generate image with reference images | `promptText`, `referenceImages` |
+| `GenerateVideoFromText` | Generate video from text prompt | `promptText` |
+| `GenerateVideoFromImage` | Generate video from image | `promptImage` |
+| `UpscaleVideo` | Upscale video quality | `promptVideo` |
+| `GetTaskStatus` | Check task progress | `taskId` |
+| `ListTasks` | List recent tasks | None |
+| `CancelTask` | Cancel running task | `taskId` |
 
-List descriptions and parameters from all generated tools with:
+## Supported Models
 
-```sh
-node index.js tools
-```
+- **gen4_image**: Advanced image generation with reference support
+- **gen4_turbo**: Fast video generation from text or images  
+- **upscale_video**: Video quality enhancement
 
-Example:
+## Supported Formats
 
-```
-Available Tools:
+### Images
+- JPEG, PNG, WebP
+- URLs or base64 data URIs
+- Max size: 10MB per image
 
-Workspace: acme-workspace
-  Collection: useful-api
-    list_all_customers
-      Description: Retrieve a list of useful things.
-      Parameters:
-        - magic: The required magic power
-        - limit: Number of results returned
-        [...additional parameters...]
-```
+### Videos
+- MP4, MOV, WebM
+- URLs or base64 data URIs  
+- Max size: 100MB per video
 
-## ➕ Adding New Tools
+## Error Handling
 
-Extend your MCP server with more tools easily:
+The server includes comprehensive error handling for:
+- Invalid API keys
+- Network connectivity issues
+- Task failures and timeouts
+- Invalid input parameters
+- Rate limiting
 
-1. Visit [Postman MCP Generator](https://postman.com/explore/mcp-generator).
-2. Pick new API request(s), generate a new MCP server, and download it.
-3. Copy new generated tool(s) into your existing project's `tools/` folder.
-4. Update your `tools/paths.js` file to include new tool references.
+## Development Notes
 
-## 💬 Questions & Support
+### Legacy Support
+The old Luma API tools are preserved in `tools/luma-api/` for reference. To switch back to Luma tools, uncomment the Luma section in `tools/paths.js`.
 
-Visit the [Postman MCP Generator](https://postman.com/explore/mcp-generator) page for updates and new capabilities.
+### API Integration
+- Uses official `@runwayml/sdk` v2.4.0
+- Implements async task polling with proper error handling
+- Supports both URL and data URI inputs for media files
 
-Join the `#mcp-lab` channel in the [Postman Discord](https://discord.gg/HQJWM8YF) to share what you've built and get help.
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test with `npm run list-tools`
+5. Submit a pull request
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Support
+
+For issues with this MCP server, please create an issue on GitHub.
+For Runway API questions, visit the [Runway Developer Documentation](https://docs.dev.runwayml.com/).
