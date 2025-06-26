@@ -7,6 +7,7 @@ export const toolPaths = [
   // Video Generation
   'runway-api/generate-video-from-text.js',
   'runway-api/generate-video-from-image.js',
+  'runway-api/generate-video-from-video.js',
 
   // Video Enhancement
   'runway-api/upscale-video.js',

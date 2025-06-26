@@ -11,6 +11,7 @@ A Model Context Protocol (MCP) server for integrating with Runway AI's API to ge
 ### Video Generation
 - **Text-to-Video**: Generate videos from text descriptions using Gen4 Turbo
 - **Image-to-Video**: Animate existing images into videos
+- **Video-to-Video**: Transform existing videos with reference images (supports "restyled first frame" workflows)
 - **Video Upscaling**: Enhance video quality and resolution
 
 ### Task Management
@@ -94,6 +95,25 @@ A Model Context Protocol (MCP) server for integrating with Runway AI's API to ge
 }
 ```
 
+### Generate Video from Video (Restyled First Frame)
+```javascript
+{
+  "name": "GenerateVideoFromVideo",
+  "arguments": {
+    "promptVideo": "https://example.com/original-video.mp4",
+    "promptText": "Transform the first frame to look like @styledFrame while maintaining the original motion",
+    "referenceImages": [
+      {
+        "uri": "https://example.com/restyled-first-frame.jpg",
+        "tag": "styledFrame"
+      }
+    ],
+    "duration": 5,
+    "ratio": "1280:720"
+  }
+}
+```
+
 ### Check Task Status
 ```javascript
 {
@@ -112,6 +132,7 @@ A Model Context Protocol (MCP) server for integrating with Runway AI's API to ge
 | `GenerateImageWithReferences` | Generate image with reference images | `promptText`, `referenceImages` |
 | `GenerateVideoFromText` | Generate video from text prompt | `promptText` |
 | `GenerateVideoFromImage` | Generate video from image | `promptImage` |
+| `GenerateVideoFromVideo` | Generate video from video with reference images | `promptVideo`, `promptText` |
 | `UpscaleVideo` | Upscale video quality | `promptVideo` |
 | `GetTaskStatus` | Check task progress | `taskId` |
 | `ListTasks` | List recent tasks | None |
