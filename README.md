@@ -167,9 +167,6 @@ The server includes comprehensive error handling for:
 
 ## Development Notes
 
-### Legacy Support
-The old Luma API tools are preserved in `tools/luma-api/` for reference. To switch back to Luma tools, uncomment the Luma section in `tools/paths.js`.
-
 ### API Integration
 - Uses official `@runwayml/sdk` v2.4.0
 - Implements async task polling with proper error handling
