@@ -29,8 +29,7 @@ const executeFunction = async ({ taskId }) => {
 
         const client = new RunwayML({ apiKey });
 
-        // Note: The actual cancellation endpoint may vary
-        // This implementation assumes a cancel method exists
+        // Try using the cancel method - this may need adjustment based on actual SDK
         const result = await client.tasks.cancel(taskId);
 
         return {

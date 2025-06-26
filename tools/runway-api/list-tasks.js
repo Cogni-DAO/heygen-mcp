@@ -36,27 +36,13 @@ const executeFunction = async ({
         if (status) params.status = status;
         if (cursor) params.cursor = cursor;
 
-        // Note: The actual API endpoint for listing tasks may vary
-        // This is a placeholder implementation based on common patterns
-        const tasks = await client.tasks.list(params);
-
+        // The Runway API does not provide a list tasks endpoint
+        // Users need to track task IDs manually and use GetTaskStatus for individual tasks
         return {
-            success: true,
-            tasks: tasks.data ? tasks.data.map(task => ({
-                taskId: task.id,
-                status: task.status,
-                createdAt: task.createdAt,
-                updatedAt: task.updatedAt,
-                model: task.model,
-                type: task.type,
-                output: task.output,
-                promptText: task.promptText,
-                promptImage: task.promptImage,
-                failureReason: task.failureReason
-            })) : [],
-            hasMore: tasks.hasMore,
-            nextCursor: tasks.nextCursor,
-            total: tasks.total
+            success: false,
+            error: 'Task listing not supported',
+            message: 'The Runway API does not provide a list tasks endpoint. You need to track task IDs from generation responses and use GetTaskStatus to check individual tasks.',
+            suggestion: 'Use GetTaskStatus with task IDs returned from generation methods (GenerateImage, GenerateVideo, etc.)'
         };
 
     } catch (error) {
