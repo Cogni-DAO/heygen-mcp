@@ -1,0 +1,36 @@
+# Cogni Git Review Repository Specification Template
+# Copy this file to .cogni/repo-spec.yaml and customize for your repository
+
+schema_version: '0.1.4'
+
+intent:
+  name: heygen-mcp
+  goals:
+    - Clear, scoped goals of the project
+  non_goals:
+    - Explicitly out-of-scope items
+
+# Gates run in the order they appear below.
+gates:
+  # Built-in gates (run directly in bot process)
+  - type: review-limits
+    id: review_limits
+    with:
+      max_changed_files: 30
+      max_total_diff_kb: 100
+
+  - type: ai-rule
+    with:
+      rule_file: ai-rule-template.yaml
+
+# Ensure */*/AGENTS.md files are updated when code changes
+  - type: agents-md-sync
+    id: agents_md_sync
+    # with:  # Optional configuration
+    #   code_patterns: ["src/**/*.js", "lib/**/*.ts"]  # Files that require doc updates
+    #   doc_pattern: "CLAUDE.md"                       # Documentation file to check. Default is AGENTS.md
+
+  # - type: goal-declaration
+  #   id: goal_declaration
+  # - type: forbidden-scopes
+  #   id: forbidden_scopes
