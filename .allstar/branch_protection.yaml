@@ -1,0 +1,13 @@
+optConfig:
+  optOutStrategy: true   # or ensure the repo is otherwise enabled
+action: fix
+enforceDefault: true
+enforceOnAdmins: true
+requireUpToDateBranch: true
+requireApproval: true
+approvalCount: 1
+requireStatusChecks:
+  - context: CI
+  - context: Security
+  - context: Release
+  - context: Cogni Git PR Review
