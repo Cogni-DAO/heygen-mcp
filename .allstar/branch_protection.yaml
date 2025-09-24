@@ -1,13 +1,11 @@
 optConfig:
-  optIn: true   # or ensure the repo is otherwise enabled
-action: fix
+  optIn: true         # required for single-repo install
+
+action: fix           # actually set branch protections
+
 enforceDefault: true
 enforceOnAdmins: true
 requireUpToDateBranch: true
-requireApproval: true
+
+requireApproval: true   # set true + approvalCount if you want reviews
 approvalCount: 1
-requireStatusChecks:
-  - context: CI
-  - context: Security
-  - context: Release
-  - context: Cogni Git PR Review
