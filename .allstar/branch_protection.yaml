@@ -1,11 +1,9 @@
 optConfig:
-  optIn: true         # required for single-repo install
-
-action: fix           # actually set branch protections
-
+  optOutStrategy: true
+  disableRepoOverride: true
+action: issue
 enforceDefault: true
-enforceOnAdmins: true
-requireUpToDateBranch: true
-
-requireApproval: true   # set true + approvalCount if you want reviews
+requireApproval: true
 approvalCount: 1
+dismissStale: false
+blockForce: true
