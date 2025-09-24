@@ -1,5 +1,5 @@
 optConfig:
-  optOutStrategy: true   # or ensure the repo is otherwise enabled
+  optIn: true   # or ensure the repo is otherwise enabled
 action: fix
 enforceDefault: true
 enforceOnAdmins: true
